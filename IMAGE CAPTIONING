@@ -1,0 +1,40 @@
+import tensorflow as tf
+from tensorflow.keras.applications import VGG16
+from tensorflow.keras.layers import LSTM, Embedding, Dense
+
+# Load pre-trained VGG model for feature extraction
+vgg_model = VGG16(include_top=False, weights='imagenet')
+
+# Build caption generation model
+caption_model = tf.keras.Sequential([
+    Embedding(vocabulary_size, embedding_dim, input_length=max_caption_length),
+    LSTM(hidden_units, return_sequences=True),
+    Dense(vocabulary_size, activation='softmax')
+])
+
+# Compile the model
+caption_model.compile(loss='categorical_crossentropy', optimizer='adam')
+
+# Train the model using image features and caption tokens
+
+# Generate captions for new images using the trained model and image features
+def generate_caption(image_features):
+    start_token = tokenizer.word_index['<start>']
+    end_token = tokenizer.word_index['<end>']
+    caption = [start_token]
+    while len(caption) < max_caption_length:
+        padded_caption = tf.keras.preprocessing.sequence.pad_sequences([caption], maxlen=max_caption_length, padding='post')
+        prediction = caption_model.predict([image_features, padded_caption])
+        predicted_token = np.argmax(prediction)
+        if predicted_token == end_token:
+            break
+        caption.append(predicted_token)
+    return ' '.join(tokenizer.index_word[token] for token in caption[1:])
+
+# Load an image and extract features using VGG
+image = load_image("example.jpg")
+image_features = vgg_model.predict(preprocess_image(image))
+
+# Generate caption for the image
+generated_caption = generate_caption(image_features)
+print("Generated Caption:", generated_caption)
