@@ -1,0 +1,25 @@
+import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Sample movie-genre matrix (1 if movie belongs to genre, 0 otherwise)
+movie_genres = np.array([
+    [1, 0, 1, 0, 0],  # Movie 1: Action, Comedy
+    [0, 1, 0, 1, 0],  # Movie 2: Drama, Romance
+    [1, 1, 0, 0, 1],  # Movie 3: Action, Comedy, Fantasy
+    [0, 0, 1, 1, 0],  # Movie 4: Fantasy, Sci-Fi
+    [0, 1, 1, 0, 0]   # Movie 5: Drama, Romance, Action
+])
+
+# Sample user preferences (rating for each genre)
+user_preferences = np.array([5, 4, 3, 0, 0])  # Action: 5, Comedy: 4, Drama: 3
+
+# Calculate cosine similarity between user preferences and movie genres
+similarities = cosine_similarity([user_preferences], movie_genres)
+
+# Get movie recommendations based on similarity scores
+recommended_movie_indices = np.argsort(similarities[0])[::-1]
+top_n_recommendations = recommended_movie_indices[:3]  # Top 3 recommendations
+
+print("Recommended Movies:")
+for idx in top_n_recommendations:
+    print(f"Movie {idx + 1}")
