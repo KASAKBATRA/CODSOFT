@@ -1,0 +1,45 @@
+import re
+
+def get_weather(city):
+    # In a real implementation, this function would fetch weather data from an API
+    # For simplicity, let's assume the weather is always sunny.
+    return "The weather in {} is sunny today.".format(city)
+
+def chatbot_response(user_input):
+    # Convert user input to lowercase for case-insensitive matching
+    user_input = user_input.lower()
+
+    # Define patterns and corresponding responses
+    greeting_patterns = ["hi", "hello", "hey", "howdy"]
+    weather_patterns = ["weather in", "what's the weather like in", "tell me about the weather in"]
+    
+    # Check for greetings
+    for pattern in greeting_patterns:
+        if re.search(pattern, user_input):
+            return "Hello! How can I assist you today?"
+
+    # Check for weather queries
+    for pattern in weather_patterns:
+        match = re.search(pattern, user_input)
+        if match:
+            city = user_input[match.end():].strip()
+            return get_weather(city)
+
+    # Default response if input doesn't match any predefined patterns
+    return "I'm sorry, but I don't understand your request."
+
+# Main loop to interact with the chatbot
+def main():
+    print("Chatbot: Hello! How can I assist you today? (type 'exit' to end)")
+
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == "exit":
+            print("Chatbot: Goodbye!")
+            break
+        else:
+            response = chatbot_response(user_input)
+            print("Chatbot:", response)
+
+if __name__ == "_main_":
+    main()
